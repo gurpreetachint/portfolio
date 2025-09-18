@@ -1,0 +1,26 @@
+/* Define variables in the :root pseudo-class */
+:root {
+  --primary-color: #7867bc;
+  --secondary-color: #EE3B5E;
+  --background-color: #F5FCFF;
+  --text-color: #333;
+  --font-family: 'Lato';
+}
+
+
+/* Add custom glow effect */
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 5px var(--primary-color);
+  }
+  50% {
+    text-shadow: 0 0 10px var(--primary-color), 0 0 15px var(--primary-color);
+  }
+  100% {
+    text-shadow: 0 0 5px var(--primary-color);
+  }
+}
+
+.glow-effect {
+  animation: glow 1.5s infinite alternate;
+}
