@@ -1,23 +1,27 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense, lazy } from "react";
 import portfolio from "./assets/portfolio2.png";
 import resumePDF from "./assets/Gurpreet_Singh_Resume.pdf";
-import "./index.css"; // Ensure your Tailwind setup is in index.css
+import "./index.css";
 import "./App.css";
-import Skills from "./lib/skills.js";
-import Project from "./lib/projects.js";
-import Contact from "./lib/Contact";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { TypeAnimation } from 'react-type-animation';
 
-function Button({ needDesign = false, buttonTitle, className = "", onClick }) {
+// Lazy load components
+const Skills = lazy(() => import("./lib/skills.js"));
+const Project = lazy(() => import("./lib/projects.js"));
+const Contact = lazy(() => import("./lib/Contact"));
+
+function Button({ needDesign = false, buttonTitle, className = "", onClick, ariaLabel, type = 'button' }) {
   return (
     <button
+      type={type}
       onClick={onClick}
+      aria-label={ariaLabel || buttonTitle}
       className={`${
         needDesign
           ? "btn-fancy"
-          : "px-4 py-2 bg-transparent text-text dark:text-text-dark hover:text-primary-light dark:hover:text-primary-dark font-semibold relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-primary-light dark:after:bg-primary-dark after:transition-all after:duration-300"
+          : "px-4 py-2 bg-transparent text-text dark:text-text-dark hover:text-primary-light dark:hover:text-primary-dark font-semibold relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-primary-light dark:after:bg-primary-dark after:transition-all after:duration-300 focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-2 focus:ring-offset-surface dark:focus:ring-offset-surface-dark"
       } ${className}`}
     >
       {buttonTitle}
@@ -26,16 +30,26 @@ function Button({ needDesign = false, buttonTitle, className = "", onClick }) {
 }
 
 function ThemeToggle() {
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) return savedTheme === 'dark';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
+  const [isMounted, setIsMounted] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
+  // Initialize theme after component mounts to avoid hydration mismatch
   useEffect(() => {
+    setIsMounted(true);
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    
+    setIsDark(initialTheme);
+    if (initialTheme) {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  // Update theme when isDark changes
+  useEffect(() => {
+    if (!isMounted) return;
+    
     if (isDark) {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
@@ -43,43 +57,47 @@ function ThemeToggle() {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
-  }, [isDark]);
+  }, [isDark, isMounted]);
 
   const toggleTheme = () => {
     setIsDark(!isDark);
   };
 
+  // Don't render on server to avoid hydration mismatch
+  if (!isMounted) {
+    return (
+      <div className="h-7 w-14"></div>
+    );
+  }
+
   return (
     <div className="flex items-center">
       <button
         onClick={toggleTheme}
-        className={`relative inline-flex h-7 w-14 items-center rounded-full p-1 transition-colors duration-300 focus:outline-none ${
+        className={`relative inline-flex h-7 w-14 items-center rounded-full p-1 transition-colors duration-200 ease-in-out ${
           isDark 
-            ? 'bg-gradient-to-r from-blue-600 to-indigo-700' 
-            : 'bg-gradient-to-r from-amber-200 to-yellow-400'
-        } shadow-lg`}
+            ? 'bg-blue-600' 
+            : 'bg-amber-200'
+        } focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+          isDark ? 'focus:ring-blue-400 focus:ring-offset-blue-600' : 'focus:ring-amber-300 focus:ring-offset-amber-200'
+        }`}
         aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+        aria-pressed={isDark}
       >
-        <motion.span
-          layout
-          className={`flex h-5 w-5 items-center justify-center rounded-full bg-white shadow-md transition-colors duration-300 ${
-            isDark ? 'text-yellow-300' : 'text-amber-500'
-          }`}
-          initial={false}
-          animate={{
-            x: isDark ? 24 : 0,
-          }}
-          transition={{
-            type: 'spring',
-            stiffness: 500,
-            damping: 30,
-          }}
+        <span 
+          className={`
+            flex h-5 w-5 items-center justify-center rounded-full bg-white shadow-md 
+            transform transition-transform duration-200 ease-in-out
+            ${isDark ? 'translate-x-7 text-blue-100' : 'translate-x-0 text-amber-500'}
+          `}
+          aria-hidden="true"
         >
           {isDark ? (
             <svg 
               className="h-3.5 w-3.5" 
               fill="currentColor" 
               viewBox="0 0 20 20"
+              aria-hidden="true"
             >
               <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
             </svg>
@@ -88,29 +106,17 @@ function ThemeToggle() {
               className="h-3.5 w-3.5" 
               fill="currentColor" 
               viewBox="0 0 20 20"
+              aria-hidden="true"
             >
-              <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" />
+              <path 
+                fillRule="evenodd" 
+                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0z" 
+                clipRule="evenodd" 
+              />
             </svg>
           )}
-        </motion.span>
-        
-        {/* Optional: Add stars in dark mode */}
-        {isDark && (
-          <>
-            <motion.span 
-              className="absolute left-2 top-1 h-0.5 w-0.5 rounded-full bg-yellow-300"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-            />
-            <motion.span 
-              className="absolute left-4 top-3 h-0.5 w-0.5 rounded-full bg-yellow-300"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-            />
-          </>
-        )}
+        </span>
+        <span className="sr-only">{isDark ? 'Switch to light mode' : 'Switch to dark mode'}</span>
       </button>
     </div>
   );
@@ -124,55 +130,192 @@ function AppBar() {
 
   useEffect(() => {
     const sectionIds = ['home', 'portfolio', 'about', 'testimonials', 'contact'];
-    const elements = sectionIds
-      .map((id) => ({ id, el: document.getElementById(id) }))
-      .filter((item) => item.el);
+    let elements = [];
+    let rafId = null;
+    let ticking = false;
+    let activeId = activeRef.current;
+    let timerId = null;
+    let lastScrollY = window.scrollY;
+    let lastTime = 0;
+    const SCROLL_THRESHOLD = 50; // Reduced threshold for better responsiveness
+    const TIME_THRESHOLD = 50; // Reduced time threshold for better responsiveness
 
-    if (elements.length === 0) return;
+    // Get the current time in milliseconds
+    const now = () => performance.now();
 
-    let frameRequested = false;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        let topCandidate = { id: activeRef.current, ratio: 0 };
-        for (const entry of entries) {
-          const id = entry.target.getAttribute('id') || '';
-          if (entry.isIntersecting && entry.intersectionRatio > topCandidate.ratio) {
-            topCandidate = { id, ratio: entry.intersectionRatio };
-          }
-        }
-        if (topCandidate.id && topCandidate.id !== activeRef.current) {
-          const next = topCandidate.id;
-          if (!frameRequested) {
-            frameRequested = true;
-            window.requestAnimationFrame(() => {
-              activeRef.current = next;
-              setActiveSection(next);
-              frameRequested = false;
-            });
-          }
-        }
-      },
-      {
-        root: null,
-        rootMargin: '-35% 0px -55% 0px',
-        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
+    const updateActiveSection = (forceUpdate = false) => {
+      // Skip updates during smooth scrolling
+      if (!elements.length || document.body.classList.contains('smooth-scroll-active')) {
+        return;
       }
-    );
+      
+      const currentTime = now();
+      const currentScrollY = window.scrollY;
+      const scrollDelta = Math.abs(currentScrollY - lastScrollY);
+      const timeDelta = currentTime - lastTime;
+      
+      // Only update if we've scrolled enough or enough time has passed
+      if (!forceUpdate && scrollDelta < SCROLL_THRESHOLD && timeDelta < TIME_THRESHOLD) {
+        return;
+      }
+      
+      lastScrollY = currentScrollY;
+      lastTime = currentTime;
+      
+      const viewportHeight = window.innerHeight;
+      const scrollPosition = currentScrollY + (viewportHeight * 0.3); // 30% from top of viewport
+      
+      let newActiveId = activeId;
+      let closestSection = null;
+      let minDistance = Infinity;
+      
+      // Find the section closest to the current scroll position
+      for (let i = 0; i < elements.length; i++) {
+        const { id, el } = elements[i];
+        if (!el) continue;
+        
+        const rect = el.getBoundingClientRect();
+        const sectionTop = rect.top + currentScrollY;
+        const sectionBottom = sectionTop + rect.height;
+        
+        // Check if the section is in the viewport
+        if (sectionTop <= scrollPosition && sectionBottom >= scrollPosition) {
+          closestSection = id;
+          break; // Found the active section, no need to check others
+        }
+        
+        // Calculate distance from section top to scroll position
+        const distance = Math.abs(sectionTop - scrollPosition);
+        
+        // If this section is closer to the scroll position, update closest section
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestSection = id;
+        }
+      }
+      
+      // Only update if we found a section and it's different from current
+      if (closestSection && closestSection !== activeId) {
+        activeId = closestSection;
+        activeRef.current = activeId;
+        setActiveSection(activeId);
+      }
+      
+      ticking = false;
+    };
 
-    elements.forEach(({ el }) => observer.observe(el));
-    return () => observer.disconnect();
+    const handleScroll = () => {
+      if (!ticking) {
+        rafId = window.requestAnimationFrame(() => {
+          updateActiveSection();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    // Throttled scroll handler
+    const throttledScroll = handleScroll; // Using requestAnimationFrame for better performance
+
+    // Initialize elements
+    const init = () => {
+      elements = sectionIds
+        .map((id) => ({ id, el: document.getElementById(id) }))
+        .filter((item) => item.el);
+      
+      if (!elements.length) return;
+      
+      // Sort elements by their position in the DOM
+      elements.sort((a, b) => a.el.offsetTop - b.el.offsetTop);
+      
+      // Initial update
+      updateActiveSection(true);
+      
+      // Add event listeners
+      window.addEventListener('scroll', throttledScroll, { passive: true });
+      window.addEventListener('resize', throttledScroll, { passive: true });
+      
+      // Add a scroll end listener for better handling of fast scrolls
+      let scrollEndTimer;
+      const handleScrollEnd = () => {
+        clearTimeout(scrollEndTimer);
+        scrollEndTimer = setTimeout(() => updateActiveSection(true), 100);
+      };
+      
+      window.addEventListener('scroll', handleScrollEnd, { passive: true });
+      
+      // Return cleanup for scroll end listener
+      return () => {
+        clearTimeout(scrollEndTimer);
+        window.removeEventListener('scroll', handleScrollEnd);
+      };
+    };
+    
+    // Initialize after a small delay to ensure the DOM is ready
+    timerId = setTimeout(init, 100);
+    
+    // Cleanup function
+    return () => {
+      clearTimeout(timerId);
+      window.removeEventListener('scroll', throttledScroll);
+      window.removeEventListener('resize', throttledScroll);
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
   }, []);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
-    if (element) {
-      window.scrollTo({
-        top: element.offsetTop - 80,
-        behavior: 'smooth'
-      });
-      setIsMenuOpen(false);
-    }
+    if (!element) return;
+    
+    // Update active section immediately for better UX
+    setActiveSection(sectionId);
+    activeRef.current = sectionId;
+    
+    // Close mobile menu if open
+    setIsMenuOpen(false);
+    
+    // Add a temporary class to prevent scroll events from interfering
+    document.body.classList.add('smooth-scroll-active');
+    
+    // Use scrollIntoView with smooth behavior
+    const headerOffset = 80;
+    const elementTop = element.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+    
+    // Use requestAnimationFrame for smoother animation
+    const start = window.pageYOffset;
+    const distance = elementTop - start;
+    const duration = 500; // ms
+    let startTime = null;
+    
+    // Easing function for smooth deceleration
+    const easeInOutCubic = (t) => {
+      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    };
+    
+    const animation = (currentTime) => {
+      if (!startTime) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const run = easeInOutCubic(Math.min(timeElapsed / duration, 1));
+      
+      window.scrollTo(0, start + distance * run);
+      
+      if (timeElapsed < duration) {
+        window.requestAnimationFrame(animation);
+      } else {
+        // Remove the smooth-scroll-active class after animation completes
+        setTimeout(() => {
+          document.body.classList.remove('smooth-scroll-active');
+        }, 100);
+      }
+    };
+    
+    // Start the animation
+    window.requestAnimationFrame(animation);
+    
+    // Prevent default anchor behavior
+    return false;
   };
 
   return (
@@ -562,23 +705,29 @@ function App() {
   return (
     <div className="relative min-h-screen bg-surface dark:bg-surface-dark transition-colors duration-300">
       <AppBar />
-      <main className="space-y-12 sm:space-y-16 lg:space-y-20">
-        <AnimatedSection id="home">
-          <AboutMe />
-        </AnimatedSection>
-        <AnimatedSection id="portfolio">
-          <Skills />
-        </AnimatedSection>
-        <AnimatedSection id="about">
-          <AboutMe2 />
-        </AnimatedSection>
-        <AnimatedSection id="testimonials">
-          <Project />
-        </AnimatedSection>
-        <AnimatedSection id="contact">
-          <Contact />
-        </AnimatedSection>
-      </main>
+      <Suspense fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-light dark:border-primary-dark"></div>
+        </div>
+      }>
+        <main className="space-y-12 sm:space-y-16 lg:space-y-20">
+          <AnimatedSection id="home">
+            <AboutMe />
+          </AnimatedSection>
+          <AnimatedSection id="portfolio">
+            <Skills />
+          </AnimatedSection>
+          <AnimatedSection id="about">
+            <AboutMe2 />
+          </AnimatedSection>
+          <AnimatedSection id="testimonials">
+            <Project />
+          </AnimatedSection>
+          <AnimatedSection id="contact">
+            <Contact />
+          </AnimatedSection>
+        </main>
+      </Suspense>
       <ScrollToTopButton />
       <footer className="bg-surface-light dark:bg-surface-dark py-6 sm:py-8 mt-12 sm:mt-16 lg:mt-20">
         <div className="max-w-7xl mx-auto px-4 text-center text-text-muted dark:text-text-dark-muted">
