@@ -47,6 +47,8 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Poppins', 'system-ui', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
+        outfit: ['Outfit', 'sans-serif'],
       },
       spacing: {
         '18': '4.5rem',
@@ -69,6 +71,7 @@ module.exports = {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.5s ease-out',
         'bounce-soft': 'bounceSoft 2s infinite',
+        'spin-slow': 'spin 8s linear infinite',
       },
       keyframes: {
         fadeIn: {

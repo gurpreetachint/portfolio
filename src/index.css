@@ -1,160 +1,78 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;500;700;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Import your custom styles */
-@import "./App.css";
-@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
-
-.custom-border {
-  @apply bg-surface dark:bg-surface-dark border-surface-muted dark:border-surface-dark hover:border-primary-light dark:hover:border-primary-dark transition-colors duration-300 hover:bg-white;
-}
-
 @layer base {
-  :root {
-    --gradient-start: theme('colors.primary.light');
-    --gradient-end: theme('colors.accent.blue.light');
-  }
-
-  .dark {
-    --gradient-start: theme('colors.primary.dark');
-    --gradient-end: theme('colors.accent.blue.dark');
-  }
-
   html {
     scroll-behavior: smooth;
   }
-  
   body {
-    @apply bg-surface dark:bg-surface-dark text-text dark:text-text-dark antialiased transition-colors duration-300;
-    margin: 0;
-    font-family: "Lato", sans-serif; /* Set default font to Lato */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: #f7fafc; /* Softer base background */
+    font-family: 'Inter', sans-serif;
+    @apply bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900 text-slate-900 dark:text-slate-200 antialiased overflow-x-hidden transition-colors duration-500 relative min-h-screen;
   }
-}
-
-@layer components {
-  .glow-effect {
-    @apply shadow-[0_0_15px_theme('colors.primary.light')] dark:shadow-[0_0_15px_theme('colors.primary.dark')];
-  }
-
-  .gradient-box {
-    @apply relative overflow-hidden;
-  }
-
-  .gradient-box::before {
-    @apply content-[''] absolute inset-0 opacity-20 dark:opacity-10 transition-opacity duration-300;
-    background: linear-gradient(
-      135deg,
-      var(--gradient-start) 0%,
-      var(--gradient-end) 100%
-    );
-  }
-
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-light to-accent-blue-light dark:from-primary-dark dark:to-accent-blue-dark;
-  }
-
-  /* Glass card */
-  .glass-card {
-    @apply backdrop-blur-2xl rounded-3xl shadow-soft dark:shadow-soft-dark;
-    background: linear-gradient(
-      180deg,
-      rgba(255,255,255,0.45) 0%,
-      rgba(255,255,255,0.35) 100%
-    );
-    border: 1px solid rgba(255,255,255,0.22);
-  }
-  .dark .glass-card {
-    background: rgba(11,18,32,0.6);
-    border: 1px solid rgba(255,255,255,0.08);
-  }
-
-  /* Light-mode soft section background */
-  .section-bg-light {
-    position: relative;
-    background: radial-gradient(1200px 400px at 50% -10%, rgba(124,58,237,0.07), transparent 60%),
-                radial-gradient(900px 300px at 10% 0%, rgba(37,99,235,0.06), transparent 60%),
-                radial-gradient(900px 300px at 90% 0%, rgba(34,211,238,0.06), transparent 60%);
-  }
-  .section-bg-light::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: linear-gradient(to right, rgba(0,0,0,0.025) 1px, transparent 1px),
-                      linear-gradient(to bottom, rgba(0,0,0,0.025) 1px, transparent 1px);
-    background-size: 24px 24px;
-    pointer-events: none;
-    mask-image: radial-gradient(ellipse at center, black 60%, transparent 85%);
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    @apply font-bold;
   }
 }
 
 @layer utilities {
-  /* Animated gradient background */
-  .animated-gradient-bg {
-    position: absolute;
-    inset: -25% -10% -10% -10%;
-    background: radial-gradient(60% 60% at 20% 20%, theme('colors.accent.purple.light') 0%, transparent 60%),
-                radial-gradient(50% 50% at 80% 10%, theme('colors.accent.blue.light') 0%, transparent 60%),
-                radial-gradient(40% 40% at 50% 90%, theme('colors.accent.green.light') 0%, transparent 60%);
-    filter: blur(60px);
-    opacity: .3;
-    animation: floatBlobs 16s ease-in-out infinite;
-    pointer-events: none;
+  .glass {
+    @apply bg-white/70 dark:bg-white/5 backdrop-blur-lg border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-none;
   }
-
-  @keyframes floatBlobs {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-10px) scale(1.03); }
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600;
   }
-
-  /* Subtle grid overlay */
-  .grid-overlay {
-    position: absolute;
-    inset: 0;
-    background-image: linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
-                      linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
-    background-size: 24px 24px;
-    mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
-    pointer-events: none;
-  }
-
-  /* Neutral Apple-like button */
-  .btn-fancy {
-    @apply relative inline-flex items-center justify-center px-5 py-2.5 font-medium rounded-full text-white transition-all duration-200 shadow-soft hover:shadow-medium;
-    background-color: rgb(17,24,39);
-    border: 1px solid rgba(255,255,255,0.15);
-  }
-  .dark .btn-fancy {
-    @apply text-gray-900;
-    background-color: rgb(255,255,255);
-    border-color: rgba(255,255,255,0.2);
-  }
-  .btn-fancy:hover { filter: brightness(0.95); }
-  .dark .btn-fancy:hover { filter: brightness(1.03); }
 }
 
-/* Custom scrollbar */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  @apply w-2;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-surface-muted dark:bg-surface-dark;
+  background: #0f172a; 
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-primary-light dark:bg-primary-dark rounded-full;
+  background: #334155; 
+  border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-accent-purple-light dark:bg-accent-purple-dark;
+  background: #475569; 
 }
 
-code {
-  font-family: "Lato";
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 8s linear infinite;
+}
+
+@keyframes blob {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
 }
