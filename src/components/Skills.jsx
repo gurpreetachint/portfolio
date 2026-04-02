@@ -1,127 +1,127 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaCode, FaLaptopCode, FaTools, FaUserFriends, FaDownload, FaJava, FaPython, FaReact, FaGitAlt } from 'react-icons/fa';
-import { SiDart, SiJavascript, SiFlutter, SiGraphql, SiApollographql, SiAndroidstudio, SiPostman, SiFigma, SiFirebase, SiSupabase } from 'react-icons/si';
-import { VscVscode } from 'react-icons/vsc';
 
-const SkillCategory = ({ title, icon: Icon, skills, delay }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay, duration: 0.5 }}
-        className="glass p-8 rounded-3xl hover:bg-white/10 transition-colors duration-300 flex flex-col h-full"
-    >
-        <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-6 text-2xl text-blue-400">
-            <Icon />
-        </div>
-        <h3 className="text-2xl font-bold mb-6">{title}</h3>
-        <div className="flex flex-wrap gap-3">
-            {skills.map((skill) => (
-                <div key={skill.name} className="flex items-center gap-2 bg-white dark:bg-white/5 border border-slate-100 dark:border-transparent px-4 py-2 rounded-lg text-sm md:text-base text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white hover:bg-blue-50 dark:hover:bg-white/10 transition-all cursor-default shadow-sm dark:shadow-none">
-                    {skill.icon && <skill.icon className="text-lg text-blue-500 dark:text-blue-400" />}
-                    <span>{skill.name}</span>
-                </div>
-            ))}
-        </div>
-    </motion.div>
-);
+const skillCategories = [
+  {
+    title: 'Mobile',
+    skills: ['Flutter', 'Dart', 'React Native', 'Swift', 'Kotlin']
+  },
+  {
+    title: 'Web',
+    skills: ['React', 'Next.js', 'Node.js', 'Tailwind CSS', 'HTML/CSS', 'TypeScript']
+  },
+  {
+    title: 'Python',
+    skills: ['Data Science Libraries', 'Scripting', 'Automation', 'Flask/FastAPI']
+  },
+  {
+    title: 'Tools',
+    skills: ['Git', 'VS Code', 'Chrome Extension APIs', 'Firebase', 'Supabase', 'Figma']
+  }
+];
+
+const stats = [
+  { label: 'Projects Built', value: '10+' },
+  { label: 'Apps Published', value: '10' },
+  { label: 'GitHub Stars', value: '500+' }
+];
 
 const Skills = () => {
-    const categories = [
-        {
-            title: "Languages",
-            icon: FaCode,
-            skills: [
-                { name: "Python", icon: FaPython },
-                { name: "Dart", icon: SiDart },
-                { name: "JavaScript", icon: SiJavascript },
-                { name: "Java", icon: FaJava },
-            ]
-        },
-        {
-            title: "Frameworks",
-            icon: FaLaptopCode,
-            skills: [
-                { name: "Flutter", icon: SiFlutter },
-                { name: "ReactJS", icon: FaReact },
-                { name: "GraphQL", icon: SiGraphql },
-                { name: "ApolloJS", icon: SiApollographql },
-            ]
-        },
-        {
-            title: "Tools",
-            icon: FaTools,
-            skills: [
-                { name: "Android Studio", icon: SiAndroidstudio },
-                { name: "VS Code", icon: VscVscode },
-                { name: "Git", icon: FaGitAlt },
-                { name: "Postman", icon: SiPostman },
-                { name: "Figma", icon: SiFigma },
-                { name: "Firebase", icon: SiFirebase },
-                { name: "Supabase", icon: SiSupabase },
-            ]
-        },
-        {
-            title: "Soft Skills",
-            icon: FaUserFriends,
-            skills: [
-                { name: "Leadership", icon: null },
-                { name: "Writing", icon: null },
-                { name: "Time Management", icon: null },
-                { name: "Problem Solver", icon: null },
-            ]
-        }
-    ];
+  return (
+    <section id="about" className="py-24 px-6 relative">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
 
-    return (
-        <section id="skills" className="py-24 px-6 relative overflow-hidden">
-            {/* Background Decoration */}
-            <div className="absolute top-1/2 left-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl -z-10 animate-pulse" />
-            <div className="absolute bottom-0 right-0 w-[30rem] h-[30rem] bg-blue-600/10 rounded-full blur-3xl -z-10 animate-pulse" />
+          {/* About Text & Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">Behind the Code</h2>
+            <p className="text-lightGray/80 text-lg leading-relaxed mb-10">
+              I'm a developer passionate about building clean, fast, and useful products across mobile, web, and Python ecosystems. With a strong foundation in modern frameworks, I focus on writing scalable code and creating intuitive user interfaces. Whether it's a sleek mobile app or a robust backend API, I love turning complex problems into elegant solutions.
+            </p>
 
-            <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                    <motion.h2
-                        initial={{ opacity: 0, y: -20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        className="text-4xl md:text-5xl font-bold mb-6"
-                    >
-                        My <span className="text-gradient">Skills</span>
-                    </motion.h2>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="text-slate-400 max-w-2xl mx-auto text-lg mb-8"
-                    >
-                        I specialize in creating innovative digital solutions that combine technical excellence with stunning design.
-                    </motion.p>
-
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.3 }}
-                    >
-                        <a
-                            href="/resume.pdf"
-                            download="Gurpreet_Singh_Resume.pdf"
-                            className="inline-flex items-center gap-2 px-8 py-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 border border-slate-200 dark:border-slate-700"
-                        >
-                            <FaDownload />
-                            Download Resume
-                        </a>
-                    </motion.div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {categories.map((category, index) => (
-                        <SkillCategory key={category.title} {...category} delay={index * 0.1} />
-                    ))}
-                </div>
+            {/* Stat Cards */}
+            <div className="grid grid-cols-3 gap-4">
+              {stats.map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 + (i * 0.1), duration: 0.5 }}
+                  className="glass-panel p-4 text-center border-t-2 border-t-indigoPrimary/50"
+                >
+                  <div className="text-2xl md:text-4xl font-display font-bold text-cyanSecondary mb-1">
+                    {stat.value}
+                  </div>
+                  <div className="text-xs md:text-sm text-lightGray/60 font-medium">
+                    {stat.label}
+                  </div>
+                </motion.div>
+              ))}
             </div>
-        </section>
-    );
+          </motion.div>
+
+          {/* Skills Badges */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col gap-8"
+          >
+            {skillCategories.map((category, catIdx) => (
+              <div key={category.title}>
+                <h3 className="text-xl font-display font-semibold mb-4 text-indigoPrimary">
+                  {category.title}
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {category.skills.map((skill, skillIdx) => (
+                    <motion.div
+                      key={skill}
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: (catIdx * 0.1) + (skillIdx * 0.05), duration: 0.4 }}
+                      className="px-4 py-2 rounded-full border border-indigoPrimary/30 bg-indigoPrimary/5 text-lightGray/90 text-sm font-medium hover:bg-indigoPrimary/20 hover:border-cyanSecondary/50 hover:text-cyanSecondary transition-colors shadow-[0_0_10px_rgba(99,102,241,0.1)] hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] cursor-default"
+                    >
+                      {skill}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </motion.div>
+
+        </div>
+      </div>
+
+      {/* Beyond Code Strip */}
+      <div className="max-w-7xl mx-auto mt-24 pt-12 border-t border-b border-indigoPrimary/20 pb-12">
+        <div className="flex flex-col items-center">
+          <span className="text-[11px] tracking-widest text-cyanSecondary font-mono uppercase mb-5">Beyond the screen</span>
+          <div className="flex flex-wrap justify-center gap-4 mb-6">
+            <div className="bg-white/5 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white hover:border-cyanSecondary hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all cursor-default flex items-center gap-2">
+              <span className="text-lg leading-none">🏊</span> National Level Swimmer
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white hover:border-cyanSecondary hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all cursor-default flex items-center gap-2">
+              <span className="text-lg leading-none">🎖</span> NCC A Certificate Holder
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white hover:border-cyanSecondary hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all cursor-default flex items-center gap-2">
+              <span className="text-lg leading-none">⚔</span> Army Camp Veteran
+            </div>
+          </div>
+          <p className="text-sm text-lightGray/50 italic text-center max-w-lg">
+            "I believe the best engineers train their bodies as hard as they train their minds."
+          </p>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default Skills;
