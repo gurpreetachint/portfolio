@@ -29,7 +29,7 @@ const Navbar = () => {
       >
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           {/* Logo */}
-          <a href="#" className="font-display font-bold text-2xl text-lightGray flex items-center gap-1">
+          <a href="/" className="font-display font-bold text-2xl text-lightGray flex items-center gap-1">
             <span className="text-indigoPrimary bg-indigoPrimary/10 px-2 rounded-lg py-0.5">GS</span>
           </a>
 
