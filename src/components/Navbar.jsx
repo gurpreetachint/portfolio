@@ -1,75 +1,102 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaMoon, FaSun, FaGithub, FaLinkedin } from 'react-icons/fa';
 
 const Navbar = () => {
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+  const [scrolled, setScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
+  const navLinks = [
+    { name: 'About', href: '#about' },
+    { name: 'Projects', href: '#projects' },
+    { name: 'Resume', href: '#resume' },
+    { name: 'Contact', href: '#contact' }
+  ];
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="fixed top-0 w-full z-50 glass px-6 py-4 flex justify-between items-center"
-    >
-      <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600 font-outfit">
-        Portfolio.
-      </h1>
-
-      <div className="flex items-center gap-8">
-        <ul className="hidden md:flex space-x-8">
-          {['About', 'Skills', 'Projects', 'Contact'].map((item) => (
-            <li key={item}>
-              <a
-                href={`#${item.toLowerCase()}`}
-                className="hover:text-blue-400 dark:text-slate-200 text-slate-800 transition-colors cursor-pointer text-sm font-medium tracking-wide"
-              >
-                {item}
-              </a>
-            </li>
-          ))}
-        </ul>
-
-        <div className="hidden md:flex items-center gap-4 mr-4">
-          <a href="https://github.com/gurpreetachint" target="_blank" rel="noopener noreferrer" className="text-slate-600 dark:text-slate-300 hover:text-blue-500 transition-colors">
-            <FaGithub size={20} />
+    <>
+      <nav
+        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+          scrolled ? 'bg-deepNavy/80 backdrop-blur-md border-b border-white/10 py-3' : 'bg-transparent py-5'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+          {/* Logo */}
+          <a href="#" className="font-display font-bold text-2xl text-lightGray flex items-center gap-1">
+            <span className="text-indigoPrimary bg-indigoPrimary/10 px-2 rounded-lg py-0.5">GS</span>
           </a>
-          <a href="https://linkedin.com/in/gurpreet-singh4321" target="_blank" rel="noopener noreferrer" className="text-slate-600 dark:text-slate-300 hover:text-blue-500 transition-colors">
-            <FaLinkedin size={20} />
-          </a>
+
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-8">
+            <ul className="flex space-x-8">
+              {navLinks.map((link) => (
+                <li key={link.name}>
+                  <a href={link.href} className="text-lightGray/80 hover:text-cyanSecondary transition-colors font-medium text-sm">
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <a href="#contact" className="bg-indigoPrimary hover:bg-indigoPrimary/90 text-white px-5 py-2 rounded-lg font-medium transition-colors shadow-[0_0_15px_rgba(99,102,241,0.5)]">
+              Hire Me
+            </a>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button 
+            className="md:hidden text-lightGray flex flex-col gap-1.5 z-50 focus:outline-none"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <span className={`block w-6 h-0.5 bg-lightGray transition-transform ${isOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+            <span className={`block w-6 h-0.5 bg-lightGray transition-opacity ${isOpen ? 'opacity-0' : ''}`}></span>
+            <span className={`block w-6 h-0.5 bg-lightGray transition-transform ${isOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+          </button>
         </div>
-        <button
-          onClick={toggleTheme}
-          className="p-2 rounded-full hover:bg-white/10 transition-colors text-slate-800 dark:text-yellow-400"
-          aria-label="Toggle Theme"
-        >
-          <AnimatePresence mode='wait'>
-            <motion.div
-              key={theme}
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 20, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              {theme === 'dark' ? <FaSun size={20} /> : <FaMoon size={20} className="text-slate-600" />}
-            </motion.div>
-          </AnimatePresence>
-        </button>
-      </div>
-    </motion.nav>
+      </nav>
+
+      {/* Mobile Sidebar */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+            className="fixed inset-0 z-40 bg-deepNavy border-l border-white/10 md:hidden flex flex-col p-6 items-end justify-center"
+          >
+            <ul className="flex flex-col space-y-8 text-right text-2xl font-display w-full">
+              {navLinks.map((link) => (
+                <li key={link.name}>
+                  <a 
+                    href={link.href} 
+                    onClick={() => setIsOpen(false)}
+                    className="text-lightGray/80 hover:text-cyanSecondary transition-colors block border-b border-white/10 pb-4"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+              <li>
+                <a 
+                  href="#contact"
+                  onClick={() => setIsOpen(false)}
+                  className="bg-indigoPrimary hover:bg-indigoPrimary/90 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-lg block mt-4 text-center"
+                >
+                  Hire Me
+                </a>
+              </li>
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

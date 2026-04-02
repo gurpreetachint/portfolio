@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -10,20 +10,16 @@
   }
   body {
     font-family: 'Inter', sans-serif;
-    @apply bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900 text-slate-900 dark:text-slate-200 antialiased overflow-x-hidden transition-colors duration-500 relative min-h-screen;
+    @apply bg-deepNavy text-lightGray overflow-x-hidden antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Outfit', sans-serif;
-    @apply font-bold;
+    font-family: 'Space Grotesk', sans-serif;
   }
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-white/70 dark:bg-white/5 backdrop-blur-lg border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-none;
-  }
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600;
+  .glass-panel {
+    @apply bg-white/5 border border-white/10 backdrop-blur-[12px] rounded-2xl shadow-xl;
   }
 }
 
@@ -33,46 +29,20 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a; 
+  @apply bg-deepNavy;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155; 
-  border-radius: 5px;
+  @apply bg-indigoPrimary/50 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569; 
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spin 8s linear infinite;
-}
-
-@keyframes blob {
-  0% { transform: translate(0px, 0px) scale(1); }
-  33% { transform: translate(30px, -50px) scale(1.1); }
-  66% { transform: translate(-20px, 20px) scale(0.9); }
-  100% { transform: translate(0px, 0px) scale(1); }
-}
-
-.animate-blob {
-  animation: blob 7s infinite;
+  @apply bg-indigoPrimary/80;
 }
 
 .animation-delay-2000 {
   animation-delay: 2s;
 }
-
 .animation-delay-4000 {
   animation-delay: 4s;
 }
