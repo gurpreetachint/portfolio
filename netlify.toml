@@ -1,0 +1,7 @@
+[build]
+  command = "npm run build"
+  publish = "build"
+
+[build.environment]
+  REACT_APP_WEB3FORMS_KEY = "75b32f08-6335-467f-953f-37ccbe136fc0"
+  CI = "false"
